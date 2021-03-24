@@ -1,6 +1,7 @@
-let express = require('express');
-let router = express.Router();
-let path = require('path');
+const express = require('express');
+const router = express.Router();
+const path = require('path');
+const connection = require('../database')
 
 /* GET admin portal. */
 router.get('/', function(req, res, next) {
@@ -10,7 +11,15 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
   let username = req.body.uname;
   let password = req.body.psw;
-  res.sendFile(path.resolve(__dirname,'../public/admin.html'));
+  let userQuery = 'SELECT * FROM finalProject.users WHERE user="' + username + '" AND password=sha1("' + password + '");'
+  connection.query(userQuery, function (err, result) {
+    if (err) throw err;
+    if (result.length >= 1) {
+      res.sendFile(path.resolve(__dirname,'../public/admin.html'));
+    } else {
+      res.sendFile(path.resolve(__dirname,'../public/admin_failed_login.html'));
+    }
+  });
 });
 
 module.exports = router;

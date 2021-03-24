@@ -9,8 +9,8 @@ a {
   color: #00B7FF;
 }
 
-h1 {
-  font-size: 8vw;
+h1.clients-view {
+  font-size: 6vw;
 }
 
 /* Bordered form */

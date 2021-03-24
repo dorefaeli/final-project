@@ -1,13 +1,13 @@
-let express = require('express');
-let path = require('path');
-let bodyParser = require('body-parser');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-let indexRouter = require('./routes/index');
-let adminRouter = require('./routes/admin');
+const indexRouter = require('./routes/index');
+const adminRouter = require('./routes/admin');
 
-let app = express();
+const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
