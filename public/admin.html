@@ -10,22 +10,55 @@
     <script src="javascripts/adminView.js"></script>
 </head>
 <body>
+<div class="screen-disabler">
+    <div class="loader"></div>
+    <h1 class="title is-1">Please Wait!</h1>
+</div>
 <h1 class="title is-1">Welcome!</h1>
 <div class="columns is-multiline">
     <div class="column is-one-third">
         <div class="box store-status">
             <h3 class="title is-3">Store Status</h3>
-            <div class="container">
-                <h4 class="title is-4">In store:</h4>
-                <h6 class="subtitle is-6" id="number_of_people_inside"></h6>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">In store:</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control">
+                            <input id="number_of_people_inside" class="input is-static" type="number" readonly>
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="container">
-                <h4 class="title is-4">Allowed:</h4>
-                <h6 class="subtitle is-6" id="number_of_people_allowed"></h6>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Allowed:</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control">
+                            <input id="number_of_people_allowed" class="input is-static" type="number" readonly>
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="container">
-                <h4 class="title is-4">Waiting:</h4>
-                <h6 class="subtitle is-6" id="number_of_people_outside"></h6>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Waiting:</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control">
+                            <input id="number_of_people_outside" class="input is-static" type="number" readonly>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons is-centered">
+                <button id="update-button" class="button is-success" style="display: none">Update</button>
+                <button id="change-button" class="button is-warning" style="display: inline-block">Change</button>
+                <button id="cancel-button" class="button is-danger" style="display: none">Cancel</button>
             </div>
         </div>
     </div>

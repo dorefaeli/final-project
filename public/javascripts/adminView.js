@@ -15,9 +15,9 @@ function updatePage() {
         let inside = res.inside
         let allowed = res.allowed
         let outside = res.outside
-        $('#number_of_people_inside').text(inside)
-        $('#number_of_people_allowed').text(allowed)
-        $('#number_of_people_outside').text(outside)
+        $('#number_of_people_inside').val(inside)
+        $('#number_of_people_allowed').val(allowed)
+        $('#number_of_people_outside').val(outside)
         if (inside <= allowed) {
             $('.store-status').addClass("has-background-info")
             $('.store-status').removeClass("has-background-warning")
@@ -28,8 +28,45 @@ function updatePage() {
     })
 }
 
-$().ready(function () {
-    updatePage()
-    setInterval(updatePage, 5000)
-
+$( function () {
+    updatePage();
+    let pageRefresh = setInterval(updatePage, 5000);
+    $("#change-button").on("click", function () {
+        $("#change-button").hide();
+        $("#update-button").show();
+        $("#cancel-button").show();
+        $(".store-status input[type=number]").removeClass("is-static").removeAttr("readonly");
+        clearInterval(pageRefresh);
+    });
+    $("#cancel-button").on("click", function () {
+        $("#change-button").show();
+        $("#update-button").hide();
+        $("#cancel-button").hide();
+        $(".store-status input[type=number]").addClass("is-static").attr("readonly", "readonly");
+        updatePage();
+        pageRefresh = setInterval(updatePage, 5000);
+    });
+    $("#update-button").on("click", function () {
+        $("body").addClass("is-loading");
+        $("#change-button").show();
+        $("#update-button").hide();
+        $("#cancel-button").hide();
+        $(".store-status input[type=number]").addClass("is-static").attr("readonly", "readonly");
+        let updatedStatus = {
+            // "allowed":"asdasd",
+            "allowed":$("#number_of_people_allowed").val(),
+            "inside":$("#number_of_people_inside").val(),
+            "outside":$("#number_of_people_outside").val()
+        }
+        $.post('/admin/updateStoreStatus', updatedStatus, function (data, status) {
+            if(data === "OK") {
+                $("body").removeClass("is-loading");
+            } else {
+                window.alert("Something went wrong!")
+                location.reload();
+            }
+        })
+        updatePage();
+        pageRefresh = setInterval(updatePage, 5000);
+    });
 })

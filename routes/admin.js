@@ -30,8 +30,8 @@ router.post('/updateStoreStatus', function(req, res, next) {
       ", inside = " + inside +
       ", outside = " + outside +
       " WHERE id = 1", function (err, result) {
-    if (err) throw err;
-    res.sendStatus(200);
+    if (err) res.send(err)
+    else res.sendStatus(200);
   });
 });
 
