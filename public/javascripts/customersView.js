@@ -18,12 +18,18 @@ function updatePage() {
         $('#number_of_people_inside').text(inside)
         $('#number_of_people_allowed').text(allowed)
         $('#number_of_people_outside').text(outside)
-        if (inside <= allowed) {
-            $('body').addClass("has-background-success")
-            $('body').removeClass("has-background-warning")
+        if (inside < allowed) {
+            $('body').addClass("has-background-success").removeClass("has-background-warning");
+            $('.may-enter').removeClass("is-hidden");
+            $('.please-wait').addClass("is-hidden");
+        } else if (inside === allowed) {
+            $('body').addClass("has-background-success").removeClass("has-background-warning");
+            $('.may-enter').addClass("is-hidden");
+            $('.please-wait').removeClass("is-hidden");
         } else {
-            $('body').addClass("has-background-warning")
-            $('body').removeClass("has-background-success")
+            $('body').addClass("has-background-warning").removeClass("has-background-success");
+            $('.may-enter').addClass("is-hidden");
+            $('.please-wait').removeClass("is-hidden");
         }
     })
 }
