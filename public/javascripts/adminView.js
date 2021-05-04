@@ -19,11 +19,11 @@ function updatePage() {
         $('#number_of_people_allowed').text(allowed)
         $('#number_of_people_outside').text(outside)
         if (inside <= allowed) {
-            $('body').addClass("has-background-success")
-            $('body').removeClass("has-background-warning")
+            $('.store-status').addClass("has-background-info")
+            $('.store-status').removeClass("has-background-warning")
         } else {
-            $('body').addClass("has-background-warning")
-            $('body').removeClass("has-background-success")
+            $('.store-status').addClass("has-background-warning")
+            $('.store-status').removeClass("has-background-info")
         }
     })
 }

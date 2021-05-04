@@ -5,12 +5,9 @@ body {
   text-align: -webkit-center;
 }
 
-a {
-  color: #00B7FF;
-}
-
-h1.clients-view {
-  font-size: 6vw;
+/* Removes scrollbar from customer view */
+body.customer-view::-webkit-scrollbar {
+  display: none;
 }
 
 /* Bordered form */

@@ -1,7 +1,7 @@
 let express = require('express');
 let router = express.Router();
 let path = require('path');
-const connection = require('../database')
+const connection = require('../database');
 
 
 //todo remove!
