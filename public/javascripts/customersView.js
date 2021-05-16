@@ -34,7 +34,7 @@ function updatePage() {
     })
 }
 
-$().ready(function () {
+$(function () {
     updatePage()
     setInterval(updatePage, 5000)
 

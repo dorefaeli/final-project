@@ -53,7 +53,6 @@ $( function () {
         $("#cancel-button").hide();
         $(".store-status input[type=number]").addClass("is-static").attr("readonly", "readonly");
         let updatedStatus = {
-            // "allowed":"asdasd",
             "allowed":$("#number_of_people_allowed").val(),
             "inside":$("#number_of_people_inside").val(),
             "outside":$("#number_of_people_outside").val()
