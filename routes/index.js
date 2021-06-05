@@ -22,4 +22,9 @@ router.get('/status', function(req, res, next) {
   });
 });
 
+router.post('/images', function(req, res, next) {
+  console.log('recieved an image');
+  res.send(ok)
+});
+
 module.exports = router;
