@@ -9,6 +9,15 @@ body.customer-view::-webkit-scrollbar {
   display: none;
 }
 
+body.customer-view .images {
+  display: flex;
+  justify-content: center;
+}
+
+body.customer-view .images figure.image {
+  margin: 1rem;
+}
+
 /* Bordered form */
 form#admin-login-form {
   border: 3px solid #f1f1f1;
