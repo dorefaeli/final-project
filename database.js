@@ -36,7 +36,7 @@ amqp.connect('amqp://localhost', function (error0, connection) {
             console.log(" [x] Received new person entered");
 
             // update db
-            DBconnection.query("UPDATE store_details SET currently = currently + 1 WHERE id = 1", function (err, result) {
+            DBconnection.query("UPDATE store_details SET inside = inside + 1 WHERE id = 1", function (err, result) {
                 if (err) throw err;
             });
 
@@ -77,7 +77,7 @@ amqp.connect('amqp://localhost', function (error0, connection) {
             console.log(" [x] Received exit");
 
             // update db
-            DBconnection.query("UPDATE store_details SET currently = currently - 1 WHERE id = 1", function (err, result) {
+            DBconnection.query("UPDATE store_details SET inside = inside - 1 WHERE id = 1", function (err, result) {
                 if (err) throw err;
             });
 
