@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const amqp = require('amqplib/callback_api');
 
-let DBconnection = mysql.createConnection({
+let DB_connection = mysql.createConnection({
     host     : 'localhost',
     port     : '3307',
     user     : 'root',
@@ -9,7 +9,7 @@ let DBconnection = mysql.createConnection({
     database : 'finalProject'
 });
 
-DBconnection.connect(function(err) {
+DB_connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
 });
@@ -36,11 +36,11 @@ amqp.connect('amqp://localhost', function (error0, connection) {
             console.log("gender is: %s and age is: %s", msg_content[0], msg_content[1]);
             // update db
             let query = "INSERT INTO finalProject.store_details (allowed, inside, outside) SELECT allowed, inside+1, outside FROM finalProject.store_details ORDER BY id DESC LIMIT 1;"
-            DBconnection.query(query, function (err, result) {
+            DB_connection.query(query, function (err) {
                 if (err) throw err;
             });
             query = `INSERT INTO finalProject.customers (gender, age) VALUES ("${msg_content[0]}", ${msg_content[1]});`
-            DBconnection.query(query, function (err, result) {
+            DB_connection.query(query, function (err) {
                 if (err) throw err;
             });
             channel.ack(msg)
@@ -65,7 +65,7 @@ amqp.connect('amqp://localhost', function (error0, connection) {
 
             // update db
             let query = "INSERT INTO finalProject.store_details (allowed, inside, outside) SELECT allowed, inside-1, outside FROM finalProject.store_details ORDER BY id DESC LIMIT 1;"
-            DBconnection.query(query, function (err, result) {
+            DB_connection.query(query, function (err) {
                 if (err) throw err;
             });
             channel.ack(msg)
@@ -76,4 +76,4 @@ amqp.connect('amqp://localhost', function (error0, connection) {
 });
 
 
-module.exports = DBconnection
+module.exports = DB_connection
