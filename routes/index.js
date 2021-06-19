@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/status', function(req, res, next) {
-  connection.query("SELECT * FROM finalProject.store_details;", function (err, result) {
+  connection.query("SELECT * FROM finalProject.store_details ORDER BY id DESC LIMIT 1;", function (err, result) {
     if (err) throw err;
     res.send(JSON.stringify(result[0]));
   });

@@ -61,8 +61,9 @@ $( function () {
             if(data === "OK") {
                 $("body").removeClass("is-loading");
             } else {
-                window.alert("Something went wrong!")
-                location.reload();
+                // window.alert("Something went wrong!")
+                console.log(data)
+                // location.reload();
             }
         })
         updatePage();

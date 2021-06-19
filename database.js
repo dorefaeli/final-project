@@ -20,40 +20,28 @@ amqp.connect('amqp://localhost', function (error0, connection) {
         throw error0;
     }
     // listening for new entrances
-    connection.createChannel(function (error1, channel) {
-        if (error1) {
-            throw error1;
+    connection.createChannel(function (channelCreationError, channel) {
+        if (channelCreationError) {
+            throw channelCreationError;
         }
         let queue = 'entered';
 
         channel.assertQueue(queue, {
             durable: true
         });
-
         // reads messages from "enter" queue
-        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
         channel.consume(queue, function (msg) {
+            let msg_content = msg.content.toString().split("-")
             console.log(" [x] Received new person entered");
-
+            console.log("gender is: %s and age is: %s", msg_content[0], msg_content[1]);
             // update db
-            DBconnection.query("UPDATE store_details SET inside = inside + 1 WHERE id = 1", function (err, result) {
+            let query = "INSERT INTO finalProject.store_details (allowed, inside, outside) SELECT allowed, inside+1, outside FROM finalProject.store_details ORDER BY id DESC LIMIT 1;"
+            DBconnection.query(query, function (err, result) {
                 if (err) throw err;
             });
-
-            // add a message to update queue
-            connection.createChannel(function (error1, channel) {
-                if (error1) {
-                    throw error1;
-                }
-                let queue = 'update';
-                let msg = '';
-
-                channel.assertQueue(queue, {
-                    durable: false
-                });
-
-                channel.sendToQueue(queue, Buffer.from(msg));
-                console.log(' [x] Sent "updated"', msg);
+            query = `INSERT INTO finalProject.customers (gender, age) VALUES ("${msg_content[0]}", ${msg_content[1]});`
+            DBconnection.query(query, function (err, result) {
+                if (err) throw err;
             });
             channel.ack(msg)
         }, {
@@ -61,9 +49,9 @@ amqp.connect('amqp://localhost', function (error0, connection) {
         });
     });
     // listening for new exits
-    connection.createChannel(function (error1, channel) {
-        if (error1) {
-            throw error1;
+    connection.createChannel(function (channelCreationError, channel) {
+        if (channelCreationError) {
+            throw channelCreationError;
         }
         let queue = 'exited';
 
@@ -71,30 +59,14 @@ amqp.connect('amqp://localhost', function (error0, connection) {
             durable: true
         });
 
-        // reads messages from "enter" queue
-        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
+        // reads messages from "exited" queue
         channel.consume(queue, function (msg) {
-            console.log(" [x] Received exit");
+            console.log(" [x] Received person exit");
 
             // update db
-            DBconnection.query("UPDATE store_details SET inside = inside - 1 WHERE id = 1", function (err, result) {
+            let query = "INSERT INTO finalProject.store_details (allowed, inside, outside) SELECT allowed, inside-1, outside FROM finalProject.store_details ORDER BY id DESC LIMIT 1;"
+            DBconnection.query(query, function (err, result) {
                 if (err) throw err;
-            });
-
-            // add a message to update queue
-            connection.createChannel(function (error1, channel) {
-                if (error1) {
-                    throw error1;
-                }
-                let queue = 'update';
-                let msg = '';
-
-                channel.assertQueue(queue, {
-                    durable: false
-                });
-
-                channel.sendToQueue(queue, Buffer.from(msg));
-                console.log(' [x] Sent "updated"', msg);
             });
             channel.ack(msg)
         }, {

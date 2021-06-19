@@ -11,8 +11,8 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
   let username = req.body.uname;
   let password = req.body.psw;
-  let userQuery = 'SELECT * FROM finalProject.users WHERE user="' + username + '" AND password=sha1("' + password + '");'
-  connection.query(userQuery, function (err, result) {
+  let query = `SELECT * FROM finalProject.users WHERE user="${username}" AND password=sha1("${password}");`
+  connection.query(query, function (err, result) {
     if (err) throw err;
     if (result.length >= 1) {
       res.sendFile(path.resolve(__dirname,'../public/admin.html'));
@@ -23,13 +23,11 @@ router.post('/', function(req, res, next) {
 });
 
 router.post('/updateStoreStatus', function(req, res, next) {
-  allowed = req.body.allowed;
-  inside = req.body.inside;
-  outside = req.body.outside;
-  connection.query("UPDATE store_details SET allowed = " + allowed +
-      ", inside = " + inside +
-      ", outside = " + outside +
-      " WHERE id = 1", function (err, result) {
+  let allowed = req.body.allowed;
+  let inside = req.body.inside;
+  let outside = req.body.outside;
+  let query = `INSERT INTO store_details (allowed, inside, outside) VALUES (${allowed}, ${inside}, ${outside});`
+  connection.query(query, function (err, result) {
     if (err) res.send(err)
     else res.sendStatus(200);
   });
