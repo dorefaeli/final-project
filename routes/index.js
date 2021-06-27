@@ -28,4 +28,11 @@ router.get('/images', function(req, res, next) {
   res.send(JSON.stringify({imagesUpdateTime: imagesUpdateTime, images: images}));
 });
 
+router.get('/DBData', function(req, res, next) {
+  connection.query("SELECT * FROM finalProject.customers;", function (err, result) {
+    if (err) throw err;
+    res.send(JSON.stringify(result));
+  });
+});
+
 module.exports = router;

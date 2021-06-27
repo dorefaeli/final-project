@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <link rel="stylesheet" href="stylesheets/style.css">
     <script src="javascripts/adminView.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <div class="screen-disabler">
@@ -63,8 +64,11 @@
         </div>
     </div>
     <div class="column is-two-thirds">
-        <div class="box has-background-primary">
-            <h3 class="title is-3">Edit Store Info</h3>
+        <div class="box" style="border: solid 4px forestgreen">
+            <h3 class="title is-3">Statistics</h3>
+            <div>
+                <canvas id="myChart"></canvas>
+            </div>
         </div>
     </div>
     <div class="column is-full">
