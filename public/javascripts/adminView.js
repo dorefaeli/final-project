@@ -6,9 +6,9 @@ function SayThis(what, value) {
 // specify all the report types
 const report_types = {
     TotalPerHourThisDay: "Total customers per hour - This day",
-    AVGHours: "Total customers per hour",
-    TotalPerDayThisWeek: "Total customers per day - This week",
-    AVGPerDay: "Average customers per day"
+    AVGHours: "Total customers per hour - Average",
+    TotalPerDayThisWeek: "Total customers per day - Last week",
+    AVGPerDay: "Average customers per day - Average"
 }
 
 // converts the day of the week from number to string
@@ -101,11 +101,31 @@ function analyzeData(DBData, type) {
         case report_types.TotalPerHourThisDay:
             for (const dbDataKey in DBData) {
                 let entrance_time = new Date(DBData[dbDataKey].entrance_time);
-                if (now.getDate() === entrance_time.getDate() && now.getMonth() === entrance_time.getMonth() &&
-                    now.getFullYear() === entrance_time.getFullYear()){
-                    entrance_time = entrance_time.getHours();
-                    addToDict(DBData[dbDataKey], entrance_time, men, women, children);
+                now.setHours(5,59,59,0);
+                // if (now.getDate() === entrance_time.getDate() && now.getMonth() === entrance_time.getMonth() &&
+                //     now.getFullYear() === entrance_time.getFullYear()){
+                if (now <= entrance_time) {
+                        entrance_time = entrance_time.getHours().toString() + ":00";
+                        addToDict(DBData[dbDataKey], entrance_time, men, women, children);
                 }
+            }
+            break;
+        case report_types.AVGHours:
+            let firstDay = new Date(DBData[0].entrance_time);
+            let lastDay = new Date(DBData[DBData.length - 1].entrance_time);
+            let numberOfDays = Math.ceil((lastDay - firstDay) / (1000 * 60 * 60 * 24));
+            for (const dbDataKey in DBData) {
+                let entrance_time = new Date(DBData[dbDataKey].entrance_time).getHours().toString() + ":00";
+                addToDict(DBData[dbDataKey], entrance_time, men, women, children);
+            }
+            for (const mapKey in men) {
+                men[mapKey] = men[mapKey] / numberOfDays
+            }
+            for (const mapKey in women) {
+                women[mapKey] = women[mapKey] / numberOfDays
+            }
+            for (const mapKey in children) {
+                children[mapKey] = children[mapKey] / numberOfDays
             }
             break;
         case report_types.TotalPerDayThisWeek:
@@ -173,7 +193,7 @@ function addStatistics() {
     for (const reportType in report_types) {
         $(".store-statistics .buttons").append("<button id=" + reportType + "></button>")
         let report_button = $(".store-statistics .buttons #" + reportType).text(report_types[reportType])
-            .addClass("button is-outlined is-primary")
+            .addClass("button is-outlined is-primary is-small")
         $(".store-statistics .charts").append("<canvas id=" + reportType + "></canvas>")
         let report_chart = $(".store-statistics .charts #" + reportType).addClass("is-hidden")
         drawChart(report_chart, report_types[reportType])
