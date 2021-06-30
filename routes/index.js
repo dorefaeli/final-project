@@ -29,7 +29,7 @@ router.get('/images', function(req, res, next) {
 });
 
 router.get('/DBData', function(req, res, next) {
-  connection.query("SELECT * FROM finalProject.customers;", function (err, result) {
+  connection.query("SELECT * FROM finalProject.customers ORDER BY entrance_time;", function (err, result) {
     if (err) throw err;
     res.send(JSON.stringify(result));
   });

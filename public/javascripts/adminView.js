@@ -3,6 +3,7 @@ function SayThis(what, value) {
     console.log(value);
 }
 
+// specify all the report types
 const report_types = {
     TotalPerHourThisDay: "Total customers per hour - This day",
     AVGHours: "Total customers per hour",
@@ -10,6 +11,7 @@ const report_types = {
     AVGPerDay: "Average customers per day"
 }
 
+// converts the day of the week from number to string
 let days_of_the_week = new Array(7);
 days_of_the_week[0]= "Sunday";
 days_of_the_week[1]= "Monday";
@@ -19,6 +21,7 @@ days_of_the_week[4]= "Thursday";
 days_of_the_week[5]= "Friday";
 days_of_the_week[6]= "Saturday";
 
+// defines the age that a customer should pass to be considered as adult
 const AgeLimit = 15;
 
 let DBData = null
@@ -33,6 +36,7 @@ function httpGetAsync(theUrl, callback) {
     xmlHttp.send(null);
 }
 
+// the main loop of the page that updates the number of customers inside and outside of the store
 function updatePage() {
     httpGetAsync('/status', function (res) {
         res = JSON.parse(res)
@@ -52,10 +56,10 @@ function updatePage() {
     })
 }
 
-function drawChart(type) {
+// draw a specific chart to a given canvas
+function drawChart(chart_canvas, type) {
     loadDataFromDB((data) => {
-        let ctx = document.getElementById('myChart');
-        let myChart = new Chart(ctx, {
+        let myChart = new Chart(chart_canvas, {
             type: 'bar',
             data: {
                 datasets: analyzeData(data, type)
@@ -65,52 +69,59 @@ function drawChart(type) {
     })
 }
 
-function addToDict(customer_data, entrence_time, men, women, children) {
+// adds a record to a dictionary (helps "analyzeData" function building the datasets)
+function addToDict(customer_data, entrance_time, men, women, children) {
     if (customer_data.age <= AgeLimit) {
-        if (children[entrence_time] !== undefined)
-            children[entrence_time] += 1;
+        if (children[entrance_time] !== undefined)
+            children[entrance_time] += 1;
         else
-            children[entrence_time] = 1;
+            children[entrance_time] = 1;
     } else if (customer_data.gender === "m") {
-        if (men[entrence_time] !== undefined) {
-            men[entrence_time] = men[entrence_time] + 1;
+        if (men[entrance_time] !== undefined) {
+            men[entrance_time] = men[entrance_time] + 1;
         } else {
-            men[entrence_time] = 1;
+            men[entrance_time] = 1;
         }
     } else {
-        if (women[entrence_time] !== undefined)
-            women[entrence_time] += 1;
+        if (women[entrance_time] !== undefined)
+            women[entrance_time] += 1;
         else
-            women[entrence_time] = 1;
+            women[entrance_time] = 1;
     }
 }
 
+// builds the datasets for the reports
 function analyzeData(DBData, type) {
     let datasets = [];
+    let now = new Date();
     let men = new Map();
     let women = new Map();
     let children = new Map();
     switch (type) {
         case report_types.TotalPerHourThisDay:
             for (const dbDataKey in DBData) {
-                let entrence_time = new Date(DBData[dbDataKey].entrence_time).getHours();
-                addToDict(DBData[dbDataKey], entrence_time, men, women, children);
+                let entrance_time = new Date(DBData[dbDataKey].entrance_time);
+                if (now.getDate() === entrance_time.getDate() && now.getMonth() === entrance_time.getMonth() &&
+                    now.getFullYear() === entrance_time.getFullYear()){
+                    entrance_time = entrance_time.getHours();
+                    addToDict(DBData[dbDataKey], entrance_time, men, women, children);
+                }
             }
             break;
         case report_types.TotalPerDayThisWeek:
             for (const dbDataKey in DBData) {
-                let entrence_time = new Date(DBData[dbDataKey].entrence_time);
+                let entrance_time = new Date(DBData[dbDataKey].entrance_time);
                 let d = new Date();
                 d.setDate(d.getDate() - 7);
-                if (entrence_time > d.setDate(d.getDate() - 7)) {
-                    addToDict(DBData[dbDataKey], days_of_the_week[entrence_time.getDay()], men, women, children);
+                if (entrance_time > d.setDate(d.getDate() - 7)) {
+                    addToDict(DBData[dbDataKey], days_of_the_week[entrance_time.getDay()], men, women, children);
                 }
             }
             break;
         case report_types.AVGPerDay:
             // for (const dbDataKey in DBData) {
-            //     let entrence_time = new Date(DBData[dbDataKey].entrence_time).getDay();
-            //     addToDict(DBData[dbDataKey], entrence_time, men, women, children);
+            //     let entrance_time = new Date(DBData[dbDataKey].entrance_time).getDay();
+            //     addToDict(DBData[dbDataKey], entrance_time, men, women, children);
             // }
             break;
     }
@@ -144,6 +155,7 @@ function analyzeData(DBData, type) {
     return datasets;
 }
 
+// loads the data from DB, since it may take a while - gets a callback function
 function loadDataFromDB(callback) {
     if (DBData != null) {
         callback(DBData);
@@ -156,6 +168,23 @@ function loadDataFromDB(callback) {
     }
 }
 
+// adds the statistics part to the admin page
+function addStatistics() {
+    for (const reportType in report_types) {
+        $(".store-statistics .buttons").append("<button id=" + reportType + "></button>")
+        let report_button = $(".store-statistics .buttons #" + reportType).text(report_types[reportType])
+            .addClass("button is-outlined is-primary")
+        $(".store-statistics .charts").append("<canvas id=" + reportType + "></canvas>")
+        let report_chart = $(".store-statistics .charts #" + reportType).addClass("is-hidden")
+        drawChart(report_chart, report_types[reportType])
+        report_button.on("click", function () {
+            $(this).addClass("is-focused").siblings().removeClass("is-focused")
+            report_chart.removeClass("is-hidden").siblings().addClass("is-hidden")
+        })
+    }
+}
+
+// runs when page is finished loading, add functionality and starts main loop
 $(function () {
     updatePage();
     let pageRefresh = setInterval(updatePage, 5000);
@@ -189,13 +218,13 @@ $(function () {
             if (data === "OK") {
                 $("body").removeClass("is-loading");
             } else {
-                // window.alert("Something went wrong!")
-                console.log(data)
-                // location.reload();
+                window.alert("Something went wrong!")
+                location.reload();
             }
         })
         updatePage();
         pageRefresh = setInterval(updatePage, 5000);
     });
-    drawChart(report_types.TotalPerDayThisWeek);
+    addStatistics();
+    $(".store-statistics .buttons .button:first-child").trigger("click")
 })
