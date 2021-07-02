@@ -89,10 +89,14 @@ body.is-loading .screen-disabler {
 }
 
 /* Admin page store-status box styling */
-.box.store-status.border-good {
+.tile.box.store-status.border-good {
   border: solid 4px lightseagreen;
 }
 
-.box.store-status.border-bad {
+.tile.box.store-status.border-bad {
   border: solid 4px indianred;
+}
+
+.tile.box.store-statistics {
+  border: solid 4px forestgreen;
 }

@@ -16,9 +16,9 @@
     <h1 class="title is-1">Please Wait!</h1>
 </div>
 <!--<h1 class="title is-1">Welcome!</h1>-->
-<div class="columns is-multiline">
-    <div class="column is-one-third">
-        <div class="box store-status">
+<div class="tile is-ancestor">
+    <div class="tile is-parent is-vertical is-4">
+        <div class="tile box is-child is-12 store-status">
             <h3 class="title is-3">Store Status</h3>
             <div class="field is-horizontal">
                 <div class="field-label is-normal">
@@ -39,7 +39,8 @@
                 <div class="field-body">
                     <div class="field">
                         <p class="control">
-                            <input id="number_of_people_allowed" class="input is-static editable" type="number" readonly>
+                            <input id="number_of_people_allowed" class="input is-static editable" type="number"
+                                   readonly>
                         </p>
                     </div>
                 </div>
@@ -62,17 +63,18 @@
                 <button id="cancel-button" class="button is-danger" style="display: none">Cancel</button>
             </div>
         </div>
+        <div class="tile box is-child is-12 export-data is-8">
+            <h3 class="title is-3">Export Data</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam dapibus dictum tincidunt. Etiam lorem libero, ornare cursus iaculis ut, sagittis at eros. Nulla neque dui, suscipit a augue iaculis, malesuada finibus augue. Phasellus congue risus mi, vitae viverra turpis pulvinar ac. In hac habitasse platea dictumst. Ut vel nisl lacus. Ut ultrices a velit at ullamcorper. Maecenas risus leo, accumsan vitae lectus vestibulum, sagittis accumsan sapien. Sed faucibus arcu a tincidunt feugiat. Nunc odio erat, posuere eget eleifend sit amet, pretium vitae risus. Quisque consequat, dolor vel maximus consequat, urna turpis molestie sem, vel rhoncus leo erat vehicula orci. Aliquam rhoncus quam ac commodo blandit. Nullam quis iaculis neque. Etiam tempor urna at dui volutpat, a fermentum libero molestie.
+
+            </p>
+        </div>
     </div>
-    <div class="column is-two-thirds">
-        <div class="box store-statistics" style="border: solid 4px forestgreen">
+    <div class="tile is-parent is-vertical is-8">
+        <div class="tile box is-child is-12 store-statistics">
             <h3 class="title is-3">Statistics</h3>
             <div class="buttons is-centered"></div>
             <div class="charts"></div>
-        </div>
-    </div>
-    <div class="column is-full">
-        <div class="box has-background-grey">
-            <h3 class="title is-3">Export Data</h3>
         </div>
     </div>
 </div>
