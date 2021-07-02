@@ -47,11 +47,11 @@ function updatePage() {
         $('#number_of_people_allowed').val(allowed)
         $('#number_of_people_outside').val(outside)
         if (inside <= allowed) {
-            $('.store-status').addClass("has-background-info")
-            $('.store-status').removeClass("has-background-warning")
+            $('.store-status').addClass("border-good")
+            $('.store-status').removeClass("border-bad")
         } else {
-            $('.store-status').addClass("has-background-warning")
-            $('.store-status').removeClass("has-background-info")
+            $('.store-status').addClass("border-bad")
+            $('.store-status').removeClass("border-good")
         }
     })
 }
@@ -204,22 +204,19 @@ function addStatistics() {
     }
 }
 
-// runs when page is finished loading, add functionality and starts main loop
-$(function () {
-    updatePage();
-    let pageRefresh = setInterval(updatePage, 5000);
+function setStoreStatusButtons() {
     $("#change-button").on("click", function () {
         $("#change-button").hide();
         $("#update-button").show();
         $("#cancel-button").show();
-        $(".store-status input[type=number]").removeClass("is-static").removeAttr("readonly");
+        $(".store-status input[type=number].editable").removeClass("is-static").removeAttr("readonly");
         clearInterval(pageRefresh);
     });
     $("#cancel-button").on("click", function () {
         $("#change-button").show();
         $("#update-button").hide();
         $("#cancel-button").hide();
-        $(".store-status input[type=number]").addClass("is-static").attr("readonly", "readonly");
+        $(".store-status input[type=number].editable").addClass("is-static").attr("readonly", "readonly");
         updatePage();
         pageRefresh = setInterval(updatePage, 5000);
     });
@@ -228,7 +225,7 @@ $(function () {
         $("#change-button").show();
         $("#update-button").hide();
         $("#cancel-button").hide();
-        $(".store-status input[type=number]").addClass("is-static").attr("readonly", "readonly");
+        $(".store-status input[type=number].editable").addClass("is-static").attr("readonly", "readonly");
         let updatedStatus = {
             "allowed": $("#number_of_people_allowed").val(),
             "inside": $("#number_of_people_inside").val(),
@@ -245,6 +242,13 @@ $(function () {
         updatePage();
         pageRefresh = setInterval(updatePage, 5000);
     });
+}
+
+// runs when page is finished loading, add functionality and starts main loop
+$(function () {
+    updatePage();
+    let pageRefresh = setInterval(updatePage, 5000);
+    setStoreStatusButtons();
     addStatistics();
     $(".store-statistics .buttons .button:first-child").trigger("click")
 })

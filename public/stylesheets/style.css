@@ -87,3 +87,12 @@ body.is-loading .screen-disabler {
   color: #dbdbdb;
   font-size: 9vh;
 }
+
+/* Admin page store-status box styling */
+.box.store-status.border-good {
+  border: solid 4px lightseagreen;
+}
+
+.box.store-status.border-bad {
+  border: solid 4px indianred;
+}
