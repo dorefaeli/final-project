@@ -3,6 +3,8 @@ function SayThis(what, value) {
     console.log(value);
 }
 
+window.jsPDF = window.jspdf.jsPDF;
+
 // specify all the report types
 const report_types = {
     TotalPerHourThisDay: "Total customers per hour - This day",
@@ -24,7 +26,14 @@ days_of_the_week[6]= "Saturday";
 // defines the age that a customer should pass to be considered as adult
 const AgeLimit = 15;
 
-let DBData = null
+let DBData = null;
+let reportsPDF = new jspdf.jsPDF();
+let reportsPDFWidth = reportsPDF.internal.pageSize.getWidth();
+let reportsPDFIsEmpty = true;
+
+reportsPDF.text("Reports:", reportsPDFWidth/2, 10, {
+    align: "center"
+})
 
 function httpGetAsync(theUrl, callback) {
     let xmlHttp = new XMLHttpRequest();
@@ -242,6 +251,25 @@ function setStoreStatusButtons() {
         updatePage();
         pageRefresh = setInterval(updatePage, 5000);
     });
+}
+
+function exportReports(){
+    for (const reportType in report_types) {
+        if(!reportsPDFIsEmpty) {
+            reportsPDF.addPage();
+        } else {
+            reportsPDFIsEmpty = false
+        }
+        reportsPDF.text(report_types[reportType], reportsPDFWidth/2, 30, {
+            align: "center"
+        })
+        let report_chart = $(".store-statistics .charts #" + reportType)[0]
+        let reportImage = report_chart.toDataURL("image/jpeg", 1.0)
+        let imgWidth = (report_chart.width * 20) / 240;
+        let imgHeight = (report_chart.height * 20) / 240;
+        reportsPDF.addImage(reportImage, 'JPEG', 15, 40, imgWidth, imgHeight)
+    }
+    reportsPDF.save("Reports.pdf")
 }
 
 // runs when page is finished loading, add functionality and starts main loop

@@ -97,6 +97,12 @@ body.is-loading .screen-disabler {
   border: solid 4px indianred;
 }
 
+/* Admin page store-statistics box styling */
 .tile.box.store-statistics {
   border: solid 4px forestgreen;
+}
+
+/* Admin page store-statistics box styling */
+.tile.box.export-data {
+  border: solid 4px #22618b;
 }

@@ -7,8 +7,10 @@
     <script src="javascripts/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <link rel="stylesheet" href="stylesheets/style.css">
-    <script src="javascripts/adminView.js"></script>
+<!--    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>-->
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="javascripts/adminView.js"></script>
 </head>
 <body>
 <div class="screen-disabler">
@@ -65,8 +67,10 @@
         </div>
         <div class="tile box is-child is-12 export-data is-8">
             <h3 class="title is-3">Export Data</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam dapibus dictum tincidunt. Etiam lorem libero, ornare cursus iaculis ut, sagittis at eros. Nulla neque dui, suscipit a augue iaculis, malesuada finibus augue. Phasellus congue risus mi, vitae viverra turpis pulvinar ac. In hac habitasse platea dictumst. Ut vel nisl lacus. Ut ultrices a velit at ullamcorper. Maecenas risus leo, accumsan vitae lectus vestibulum, sagittis accumsan sapien. Sed faucibus arcu a tincidunt feugiat. Nunc odio erat, posuere eget eleifend sit amet, pretium vitae risus. Quisque consequat, dolor vel maximus consequat, urna turpis molestie sem, vel rhoncus leo erat vehicula orci. Aliquam rhoncus quam ac commodo blandit. Nullam quis iaculis neque. Etiam tempor urna at dui volutpat, a fermentum libero molestie.
-
+            <div class="buttons is-centered is-vertical">
+                <button class="button is-fullwidth is-medium" onclick="exportReports()">Export reports - PDF</button>
+                <button class="button is-fullwidth is-medium" onclick="exportAllData()">Export all raw data - CSV</button>
+            </div>
             </p>
         </div>
     </div>
