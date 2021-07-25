@@ -5,8 +5,13 @@ const connection = require('../database');
 let imagesUpdateTime;
 let images = {};
 
+/* GET favicon */
+router.get('/favicon.ico', function(req, res, next) {
+  res.sendFile(path.resolve(__dirname,'../public/icons/favicon.ico'));
+});
 
-/* GET home page. */
+
+/* GET home page */
 router.get('/', function(req, res, next) {
   res.sendFile(path.resolve(__dirname,'../public/index.html'));
 });

@@ -269,6 +269,46 @@ function setStoreStatusButtons() {
     });
 }
 
+function convertToCSVTime(entrance_time) {
+    return entrance_time.replace('T', ' ').substring(0, entrance_time.length - 5);
+}
+
+function beautifyDataForCSV(data) {
+    let new_data = []
+    for (const dataKey in data) {
+        let old_data_piece = data[dataKey];
+        let new_data_piece = {
+            "Time of entrance" : convertToCSVTime(old_data_piece.entrance_time),
+            "Gender" : (old_data_piece.gender === "m") ? "Male":"Female",
+            "Age" : old_data_piece.age
+        }
+        new_data.push(new_data_piece);
+    }
+    return new_data;
+}
+
+function exportAllData() {
+    loadDataFromDB((data) => {
+        let new_data = beautifyDataForCSV(data);
+        let fields = Object.keys(new_data[0])
+        let replacer = function(key, value) { return value === null ? '' : value }
+        let csv = new_data.map(function(row){
+            return fields.map(function(fieldName){
+                return JSON.stringify(row[fieldName], replacer)
+            }).join(',')
+        })
+        csv.unshift(fields.join(',')) // add header column
+        csv = csv.join('\r\n');
+        // Downloads the CSV file
+        let pom = document.createElement('a');
+        let blob = new Blob([csv],{type: 'text/csv;charset=utf-8;'});
+        let url = URL.createObjectURL(blob);
+        pom.href = url;
+        pom.setAttribute('download', 'raw_data.csv');
+        pom.click();
+    })
+}
+
 function exportReports(){
     for (const reportType in report_types) {
         if(!reportsPDFIsEmpty) {
