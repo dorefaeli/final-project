@@ -26,6 +26,18 @@ days_of_the_week[6]= "Saturday";
 // defines the age that a customer should pass to be considered as adult
 const AgeLimit = 15;
 
+const chart_custom_backgrond = {
+    id: 'custom_canvas_background_color',
+    beforeDraw: (chart) => {
+        const ctx = chart.canvas.getContext('2d');
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, chart.width, chart.height);
+        ctx.restore();
+    }
+};
+
 let DBData = null;
 let reportsPDF = new jspdf.jsPDF();
 let reportsPDFWidth = reportsPDF.internal.pageSize.getWidth();
@@ -73,7 +85,8 @@ function drawChart(chart_canvas, type) {
             data: {
                 datasets: analyzeData(data, type)
             },
-            options: {}
+            options: {},
+            plugins: [chart_custom_backgrond]
         });
     })
 }
@@ -205,6 +218,9 @@ function addStatistics() {
             .addClass("button is-outlined is-primary is-small")
         $(".store-statistics .charts").append("<canvas id=" + reportType + "></canvas>")
         let report_chart = $(".store-statistics .charts #" + reportType).addClass("is-hidden")
+        // let chart_context = report_chart[0].getContext("2d");
+        // chart_context.fillStyle = "#fff";
+        // chart_context.fillRect(0, 0, report_chart[0].width, report_chart[0].height);
         drawChart(report_chart, report_types[reportType])
         report_button.on("click", function () {
             $(this).addClass("is-focused").siblings().removeClass("is-focused")
@@ -265,9 +281,9 @@ function exportReports(){
         })
         let report_chart = $(".store-statistics .charts #" + reportType)[0]
         let reportImage = report_chart.toDataURL("image/jpeg", 1.0)
-        let imgWidth = (report_chart.width * 20) / 240;
-        let imgHeight = (report_chart.height * 20) / 240;
-        reportsPDF.addImage(reportImage, 'JPEG', 15, 40, imgWidth, imgHeight)
+        let imgWidth = reportsPDFWidth - 30;
+        let imgHeight = (imgWidth / report_chart.width) * report_chart.height;
+        reportsPDF.addImage(reportImage, 'JPEG', 15, 80, imgWidth, imgHeight)
     }
     reportsPDF.save("Reports.pdf")
 }
