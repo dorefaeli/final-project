@@ -15,13 +15,13 @@ const report_types = {
 
 // converts the day of the week from number to string
 let days_of_the_week = new Array(7);
-days_of_the_week[0]= "Sunday";
-days_of_the_week[1]= "Monday";
-days_of_the_week[2]= "Tuesday";
-days_of_the_week[3]= "Wednesday";
-days_of_the_week[4]= "Thursday";
-days_of_the_week[5]= "Friday";
-days_of_the_week[6]= "Saturday";
+days_of_the_week[0] = "Sunday";
+days_of_the_week[1] = "Monday";
+days_of_the_week[2] = "Tuesday";
+days_of_the_week[3] = "Wednesday";
+days_of_the_week[4] = "Thursday";
+days_of_the_week[5] = "Friday";
+days_of_the_week[6] = "Saturday";
 
 // defines the age that a customer should pass to be considered as adult
 const AgeLimit = 15;
@@ -43,7 +43,7 @@ let reportsPDF = new jspdf.jsPDF();
 let reportsPDFWidth = reportsPDF.internal.pageSize.getWidth();
 let reportsPDFIsEmpty = true;
 
-reportsPDF.text("Reports:", reportsPDFWidth/2, 10, {
+reportsPDF.text("Reports:", reportsPDFWidth / 2, 10, {
     align: "center"
 })
 
@@ -119,23 +119,23 @@ function analyzeData(DBData, type) {
     let men = new Map();
     let women = new Map();
     let children = new Map();
+    let firstEntrance = new Date(DBData[0].entrance_time);
+    let lastEntrance = new Date(DBData[DBData.length - 1].entrance_time);
+    let numberOfDays = Math.ceil((lastEntrance - firstEntrance) / (1000 * 60 * 60 * 24));
     switch (type) {
         case report_types.TotalPerHourThisDay:
             for (const dbDataKey in DBData) {
                 let entrance_time = new Date(DBData[dbDataKey].entrance_time);
-                now.setHours(5,59,59,0);
+                now.setHours(5, 59, 59, 0);
                 // if (now.getDate() === entrance_time.getDate() && now.getMonth() === entrance_time.getMonth() &&
                 //     now.getFullYear() === entrance_time.getFullYear()){
                 if (now <= entrance_time) {
-                        entrance_time = entrance_time.getHours().toString() + ":00";
-                        addToDict(DBData[dbDataKey], entrance_time, men, women, children);
+                    entrance_time = entrance_time.getHours().toString() + ":00";
+                    addToDict(DBData[dbDataKey], entrance_time, men, women, children);
                 }
             }
             break;
         case report_types.AVGHours:
-            let firstDay = new Date(DBData[0].entrance_time);
-            let lastDay = new Date(DBData[DBData.length - 1].entrance_time);
-            let numberOfDays = Math.ceil((lastDay - firstDay) / (1000 * 60 * 60 * 24));
             for (const dbDataKey in DBData) {
                 let entrance_time = new Date(DBData[dbDataKey].entrance_time).getHours().toString() + ":00";
                 addToDict(DBData[dbDataKey], entrance_time, men, women, children);
@@ -161,10 +161,36 @@ function analyzeData(DBData, type) {
             }
             break;
         case report_types.AVGPerDay:
-            // for (const dbDataKey in DBData) {
-            //     let entrance_time = new Date(DBData[dbDataKey].entrance_time).getDay();
-            //     addToDict(DBData[dbDataKey], entrance_time, men, women, children);
-            // }
+            let numberOfWeeks = Math.floor(numberOfDays / 7)
+            let numberOfSpecificDays = {}
+            for (const dayOfTheWeek in days_of_the_week) {
+                numberOfSpecificDays[days_of_the_week[dayOfTheWeek]] = numberOfWeeks
+            }
+            let firstDay = firstEntrance.getDay()
+            let lastDay = lastEntrance.getDay()
+            // add partial weeks
+            if ((firstDay-1)%7 !== lastDay) {
+                while(firstDay !== lastDay) {
+                    numberOfSpecificDays[days_of_the_week[firstDay]] += 1;
+                    firstDay += 1;
+                    firstDay %= 7;
+                }
+                numberOfSpecificDays[days_of_the_week[firstDay]] += 1;
+            }
+            console.log(numberOfSpecificDays)
+            for (const dbDataKey in DBData) {
+                let entrance_time = days_of_the_week[new Date(DBData[dbDataKey].entrance_time).getDay()];
+                addToDict(DBData[dbDataKey], entrance_time, men, women, children);
+            }
+            for (const man in men) {
+                men[man] /= numberOfSpecificDays[man]
+            }
+            for (const woman in women) {
+                women[woman] /= numberOfSpecificDays[woman]
+            }
+            for (const child in children) {
+                children[child] /= numberOfSpecificDays[child]
+            }
             break;
     }
     let men_dataset = {
@@ -273,14 +299,26 @@ function convertToCSVTime(entrance_time) {
     return entrance_time.replace('T', ' ').substring(0, entrance_time.length - 5);
 }
 
+// function ageToRange(age) {
+//     if (age < 7) return "0-6";
+//     if (age < 13) return "7-12";
+//     if (age < 17) return "13-16";
+//     if (age < 22) return "17-21";
+//     if (age < 30) return "22-29";
+//     if (age > 69) return "70+";
+//     let startOfRange = Math.floor(age / 10) * 10;
+//     let endOfRange = startOfRange + 9;
+//     return startOfRange.toString() + "-" + endOfRange.toString();
+// } TODO remove!
+
 function beautifyDataForCSV(data) {
     let new_data = []
     for (const dataKey in data) {
         let old_data_piece = data[dataKey];
         let new_data_piece = {
-            "Time of entrance" : convertToCSVTime(old_data_piece.entrance_time),
-            "Gender" : (old_data_piece.gender === "m") ? "Male":"Female",
-            "Age" : old_data_piece.age
+            "Time of entrance": convertToCSVTime(old_data_piece.entrance_time),
+            "Gender": (old_data_piece.gender === "m") ? "Male" : "Female",
+            "Age": old_data_piece.age
         }
         new_data.push(new_data_piece);
     }
@@ -291,9 +329,11 @@ function exportAllData() {
     loadDataFromDB((data) => {
         let new_data = beautifyDataForCSV(data);
         let fields = Object.keys(new_data[0])
-        let replacer = function(key, value) { return value === null ? '' : value }
-        let csv = new_data.map(function(row){
-            return fields.map(function(fieldName){
+        let replacer = function (key, value) {
+            return value === null ? '' : value
+        }
+        let csv = new_data.map(function (row) {
+            return fields.map(function (fieldName) {
                 return JSON.stringify(row[fieldName], replacer)
             }).join(',')
         })
@@ -301,7 +341,7 @@ function exportAllData() {
         csv = csv.join('\r\n');
         // Downloads the CSV file
         let pom = document.createElement('a');
-        let blob = new Blob([csv],{type: 'text/csv;charset=utf-8;'});
+        let blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
         let url = URL.createObjectURL(blob);
         pom.href = url;
         pom.setAttribute('download', 'raw_data.csv');
@@ -309,14 +349,14 @@ function exportAllData() {
     })
 }
 
-function exportReports(){
+function exportReports() {
     for (const reportType in report_types) {
-        if(!reportsPDFIsEmpty) {
+        if (!reportsPDFIsEmpty) {
             reportsPDF.addPage();
         } else {
             reportsPDFIsEmpty = false
         }
-        reportsPDF.text(report_types[reportType], reportsPDFWidth/2, 30, {
+        reportsPDF.text(report_types[reportType], reportsPDFWidth / 2, 30, {
             align: "center"
         })
         let report_chart = $(".store-statistics .charts #" + reportType)[0]
