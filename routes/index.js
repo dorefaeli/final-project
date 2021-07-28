@@ -4,6 +4,7 @@ let path = require('path');
 const connection = require('../database');
 let imagesUpdateTime;
 let images = {};
+let waitingCount = 0;
 
 /* GET favicon */
 router.get('/favicon.ico', function(req, res, next) {
@@ -19,12 +20,14 @@ router.get('/', function(req, res, next) {
 router.get('/status', function(req, res, next) {
   connection.query("SELECT * FROM finalProject.store_details ORDER BY id DESC LIMIT 1;", function (err, result) {
     if (err) throw err;
+    result[0].outside = waitingCount;
     res.send(JSON.stringify(result[0]));
   });
 });
 
-router.post('/images', function(req, res, next) {
+router.post('/entryStatus', function(req, res, next) {
   images = req.body.images;
+  waitingCount = req.body.waiting;
   imagesUpdateTime = Date.now();
   res.sendStatus(200);
 });
