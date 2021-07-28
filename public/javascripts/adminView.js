@@ -1,7 +1,8 @@
 function SayThis(what, value) {
     console.log(what);
+    console.log(typeof value)
     console.log(value);
-}
+} // TODO remove!
 
 window.jsPDF = window.jspdf.jsPDF;
 
@@ -26,7 +27,7 @@ days_of_the_week[6] = "Saturday";
 // defines the age that a customer should pass to be considered as adult
 const AgeLimit = 15;
 
-const chart_custom_backgrond = {
+const chart_custom_background = {
     id: 'custom_canvas_background_color',
     beforeDraw: (chart) => {
         const ctx = chart.canvas.getContext('2d');
@@ -77,16 +78,39 @@ function updatePage() {
     })
 }
 
+function sortDataByHours(data) {
+    let sorted = []
+    console.log(data !== data.sort())
+    return data
+}
+
+function reorder(datasets, type) {
+    for (const dataset in datasets) {
+        switch (type) {
+            case report_types.AVGHours:
+            case report_types.TotalPerHourThisDay:
+                datasets[dataset].data = sortDataByHours(datasets[dataset].data)
+                break;
+            case report_types.AVGPerDay:
+                break;
+            case report_types.TotalPerDayThisWeek:
+                break;
+        }
+    }
+}
+
 // draw a specific chart to a given canvas
 function drawChart(chart_canvas, type) {
     loadDataFromDB((data) => {
+        let datasets = analyzeData(data, type);
+        reorder(datasets, type);
         let myChart = new Chart(chart_canvas, {
             type: 'bar',
             data: {
-                datasets: analyzeData(data, type)
+                datasets: datasets
             },
             options: {},
-            plugins: [chart_custom_backgrond]
+            plugins: [chart_custom_background]
         });
     })
 }
@@ -177,7 +201,6 @@ function analyzeData(DBData, type) {
                 }
                 numberOfSpecificDays[days_of_the_week[firstDay]] += 1;
             }
-            console.log(numberOfSpecificDays)
             for (const dbDataKey in DBData) {
                 let entrance_time = days_of_the_week[new Date(DBData[dbDataKey].entrance_time).getDay()];
                 addToDict(DBData[dbDataKey], entrance_time, men, women, children);

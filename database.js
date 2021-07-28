@@ -64,7 +64,7 @@ amqp.connect('amqp://localhost', function (error0, connection) {
             console.log(" [x] Received person exit");
 
             // update db
-            let query = "INSERT INTO finalProject.store_details (allowed, inside, outside) SELECT allowed, inside-1, outside FROM finalProject.store_details ORDER BY id DESC LIMIT 1;"
+            let query = "INSERT INTO finalProject.store_details (allowed, inside, outside) SELECT allowed, greatest(inside-1, 0), outside FROM finalProject.store_details ORDER BY id DESC LIMIT 1;"
             DB_connection.query(query, function (err) {
                 if (err) throw err;
             });
