@@ -5,6 +5,7 @@ const connection = require('../database');
 let imagesUpdateTime;
 let images = {};
 let waitingCount = 0;
+let noMask = false;
 
 /* GET favicon */
 router.get('/favicon.ico', function(req, res, next) {
@@ -21,12 +22,14 @@ router.get('/status', function(req, res, next) {
   connection.query("SELECT * FROM finalProject.store_details ORDER BY id DESC LIMIT 1;", function (err, result) {
     if (err) throw err;
     result[0].outside = waitingCount;
+    result[0].noMask = noMask;
     res.send(JSON.stringify(result[0]));
   });
 });
 
 router.post('/entryStatus', function(req, res, next) {
   images = req.body.images;
+  noMask = images.length !== 0;
   waitingCount = req.body.waiting;
   imagesUpdateTime = Date.now();
   res.sendStatus(200);

@@ -1,9 +1,52 @@
 function SayThis(what, value) {
     console.log(what);
-    console.log(typeof value)
     console.log(value);
-} // TODO remove!
+}
 
+// the main loop of the page that updates the number of customers inside and outside of the store
+class pageMainLoop {
+    constructor() {
+        this.isUpdating = true;
+        this.loop();
+        this.updatePage();
+    }
+    startUpdating() {
+        this.isUpdating = true;
+        this.updatePage();
+    }
+    stopUpdating() {
+        this.isUpdating = false;
+    }
+    updatePage() {
+        httpGetAsync('/status', function (res) {
+            res = JSON.parse(res)
+            $('#number_of_people_inside').val(res.inside)
+            $('#number_of_people_allowed').val(res.allowed)
+            $('#age_threshold').val(res.age_threshold)
+            $('#masks_needed').val(res.masks_needed)
+            $('#number_of_people_outside').val(res.outside)
+            if (res.inside <= res.allowed) {
+                $('.store-status').addClass("border-good").removeClass("border-bad")
+            } else {
+                $('.store-status').addClass("border-bad").removeClass("border-good")
+            }
+            if (res.masks_needed && res.noMask) {
+                $("#mask_alert").show();
+            } else {
+                $("#mask_alert").hide();
+            }
+        })
+    }
+    loop() {
+        setInterval(()=>{
+            if (this.isUpdating) {
+                this.updatePage()
+            }
+        }, 5000);
+    }
+}
+
+// init a new pdf file that will contain the charts
 window.jsPDF = window.jspdf.jsPDF;
 
 // specify all the report types
@@ -14,7 +57,7 @@ const report_types = {
     AVGPerDay: "Average customers per day - Average"
 }
 
-// converts the day of the week from number to string
+// array that converts the day of the week from number to string
 let days_of_the_week = new Array(7);
 days_of_the_week[0] = "Sunday";
 days_of_the_week[1] = "Monday";
@@ -58,29 +101,9 @@ function httpGetAsync(theUrl, callback) {
     xmlHttp.send(null);
 }
 
-// the main loop of the page that updates the number of customers inside and outside of the store
-function updatePage() {
-    httpGetAsync('/status', function (res) {
-        res = JSON.parse(res)
-        let inside = res.inside
-        let allowed = res.allowed
-        let outside = res.outside
-        $('#number_of_people_inside').val(inside)
-        $('#number_of_people_allowed').val(allowed)
-        $('#number_of_people_outside').val(outside)
-        if (inside <= allowed) {
-            $('.store-status').addClass("border-good")
-            $('.store-status').removeClass("border-bad")
-        } else {
-            $('.store-status').addClass("border-bad")
-            $('.store-status').removeClass("border-good")
-        }
-    })
-}
-
 function sortDataByHours(data) {
-    let sorted = []
-    console.log(data !== data.sort())
+    // let sorted = []
+    // console.log(data !== data.sort()) todo remove
     return data
 }
 
@@ -138,6 +161,9 @@ function addToDict(customer_data, entrance_time, men, women, children) {
 
 // builds the datasets for the reports
 function analyzeData(DBData, type) {
+    if (DBData.length === 0) {
+        return [];
+    }
     let datasets = [];
     let now = new Date();
     let men = new Map();
@@ -193,8 +219,8 @@ function analyzeData(DBData, type) {
             let firstDay = firstEntrance.getDay()
             let lastDay = lastEntrance.getDay()
             // add partial weeks
-            if ((firstDay-1)%7 !== lastDay) {
-                while(firstDay !== lastDay) {
+            if ((firstDay - 1) % 7 !== lastDay) {
+                while (firstDay !== lastDay) {
                     numberOfSpecificDays[days_of_the_week[firstDay]] += 1;
                     firstDay += 1;
                     firstDay %= 7;
@@ -260,22 +286,30 @@ function loadDataFromDB(callback) {
 }
 
 // adds the statistics part to the admin page
-function addStatistics() {
-    for (const reportType in report_types) {
-        $(".store-statistics .buttons").append("<button id=" + reportType + "></button>")
-        let report_button = $(".store-statistics .buttons #" + reportType).text(report_types[reportType])
-            .addClass("button is-outlined is-primary is-small")
-        $(".store-statistics .charts").append("<canvas id=" + reportType + "></canvas>")
-        let report_chart = $(".store-statistics .charts #" + reportType).addClass("is-hidden")
-        // let chart_context = report_chart[0].getContext("2d");
-        // chart_context.fillStyle = "#fff";
-        // chart_context.fillRect(0, 0, report_chart[0].width, report_chart[0].height);
-        drawChart(report_chart, report_types[reportType])
-        report_button.on("click", function () {
-            $(this).addClass("is-focused").siblings().removeClass("is-focused")
-            report_chart.removeClass("is-hidden").siblings().addClass("is-hidden")
-        })
-    }
+function addStatistics(callback) {
+    loadDataFromDB((DBdata) => {
+        if (DBdata.length === 0) {
+            $(".store-statistics .charts").append("<h1 class='title is-1'> No data yet! </h1>")
+            $(".export-data .buttons button").attr("disabled", "disabled")
+        } else {
+            for (const reportType in report_types) {
+                $(".store-statistics .buttons").append("<button id=" + reportType + "></button>")
+                let report_button = $(".store-statistics .buttons #" + reportType).text(report_types[reportType])
+                    .addClass("button is-outlined is-primary is-small")
+                $(".store-statistics .charts").append("<canvas id=" + reportType + "></canvas>")
+                let report_chart = $(".store-statistics .charts #" + reportType).addClass("is-hidden")
+                // let chart_context = report_chart[0].getContext("2d");
+                // chart_context.fillStyle = "#fff";
+                // chart_context.fillRect(0, 0, report_chart[0].width, report_chart[0].height);
+                drawChart(report_chart, report_types[reportType])
+                report_button.on("click", function () {
+                    $(this).addClass("is-focused").siblings().removeClass("is-focused")
+                    report_chart.removeClass("is-hidden").siblings().addClass("is-hidden")
+                })
+            }
+            callback();
+        }
+    })
 }
 
 function setStoreStatusButtons() {
@@ -284,15 +318,16 @@ function setStoreStatusButtons() {
         $("#update-button").show();
         $("#cancel-button").show();
         $(".store-status input[type=number].editable").removeClass("is-static").removeAttr("readonly");
-        clearInterval(pageRefresh);
+        $(".store-status select").removeAttr("disabled")
+        window.mainLoop.stopUpdating();
     });
     $("#cancel-button").on("click", function () {
         $("#change-button").show();
         $("#update-button").hide();
         $("#cancel-button").hide();
         $(".store-status input[type=number].editable").addClass("is-static").attr("readonly", "readonly");
-        updatePage();
-        pageRefresh = setInterval(updatePage, 5000);
+        $(".store-status select").attr("disabled", "disabled")
+        window.mainLoop.startUpdating();
     });
     $("#update-button").on("click", function () {
         $("body").addClass("is-loading");
@@ -300,10 +335,12 @@ function setStoreStatusButtons() {
         $("#update-button").hide();
         $("#cancel-button").hide();
         $(".store-status input[type=number].editable").addClass("is-static").attr("readonly", "readonly");
+        $(".store-status select").attr("disabled", "disabled")
         let updatedStatus = {
             "allowed": $("#number_of_people_allowed").val(),
             "inside": $("#number_of_people_inside").val(),
-            "outside": $("#number_of_people_outside").val()
+            "age_threshold": $("#age_threshold").val(),
+            "masks": $("#masks_needed").val()
         }
         $.post('/admin/updateStoreStatus', updatedStatus, function (data, status) {
             if (data === "OK") {
@@ -393,9 +430,9 @@ function exportReports() {
 
 // runs when page is finished loading, add functionality and starts main loop
 $(function () {
-    updatePage();
-    let pageRefresh = setInterval(updatePage, 5000);
+    window.mainLoop = new pageMainLoop()
     setStoreStatusButtons();
-    addStatistics();
-    $(".store-statistics .buttons .button:first-child").trigger("click")
+    addStatistics(function () {
+        $(".store-statistics .buttons .button:first-child").trigger("click")
+    });
 })

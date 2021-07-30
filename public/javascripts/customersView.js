@@ -32,17 +32,19 @@ function updatePage() {
     // update the status of the store
     httpGetAsync('/status', function(res){
         res = JSON.parse(res)
-        let inside = res.inside
-        let allowed = res.allowed
-        let outside = res.outside
-        $('#number_of_people_inside').text(inside)
-        $('#number_of_people_allowed').text(allowed)
-        $('#number_of_people_outside').text(outside)
-        if (inside < allowed) {
+        if (res.masks_needed === 'y') {
+            $('.masks').show();
+        } else {
+            $('.masks').hide();
+        }
+        $('#number_of_people_inside').text(res.inside)
+        $('#number_of_people_allowed').text(res.allowed)
+        $('#number_of_people_outside').text(res.outside)
+        if (res.inside < res.allowed) {
             $('body').addClass("has-background-success").removeClass("has-background-warning");
             $('.may-enter').removeClass("is-hidden");
             $('.please-wait').addClass("is-hidden");
-        } else if (inside === allowed) {
+        } else if (res.inside === res.allowed) {
             $('body').addClass("has-background-success").removeClass("has-background-warning");
             $('.may-enter').addClass("is-hidden");
             $('.please-wait').removeClass("is-hidden");

@@ -22,6 +22,7 @@
     <div class="tile is-parent is-vertical is-4">
         <div class="tile box is-child is-12 store-status">
             <h3 class="title is-3">Store Status</h3>
+            <h4 id="mask_alert" class="title is-4" style="color: red; display: none;">Customer without mask in line!</h4>
             <div class="field is-horizontal">
                 <div class="field-label is-normal">
                     <label class="label">In store:</label>
@@ -43,6 +44,33 @@
                         <p class="control">
                             <input id="number_of_people_allowed" class="input is-static editable" type="number"
                                    readonly>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Age threshold:</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control">
+                            <input id="age_threshold" class="input is-static editable" type="number" readonly>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Masks needed outside:</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control">
+                            <select id="masks_needed" class="is-static editable" disabled="disabled">
+                                <option value="y">Yes</option>
+                                <option value="n">No</option>
+                            </select>
                         </p>
                     </div>
                 </div>

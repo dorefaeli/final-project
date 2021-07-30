@@ -106,3 +106,42 @@ body.is-loading .screen-disabler {
 .tile.box.export-data {
   border: solid 4px #22618b;
 }
+
+#masks_needed:disabled {
+  -webkit-appearance: none;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: none;
+  display: inline-flex;
+  font-size: 1rem;
+  height: 2.5em;
+  justify-content: flex-start;
+  line-height: 1.5;
+  padding: calc(.5em - 1px) calc(.75em - 1px);
+  position: relative;
+  vertical-align: top;
+  color: #363636;
+  opacity: 1;
+  max-width: 100%;
+  width: 100%;
+}
+
+#masks_needed:not([disabled="disabled"]) {
+  width: 100%;
+  max-width: 100%;
+  background-color: #fff;
+  border-color: #dbdbdb;
+  border-radius: 4px;
+  color: #363636;
+  align-items: center;
+  box-shadow: none;
+  display: inline-flex;
+  font-size: 1rem;
+  height: 2.5em;
+  justify-content: flex-start;
+  line-height: 1.5;
+  padding: calc(.5em - 1px) calc(.75em - 1px);
+  position: relative;
+  vertical-align: top;
+}

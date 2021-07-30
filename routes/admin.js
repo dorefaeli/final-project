@@ -25,8 +25,9 @@ router.post('/', function(req, res, next) {
 router.post('/updateStoreStatus', function(req, res, next) {
   let allowed = req.body.allowed;
   let inside = req.body.inside;
-  let outside = req.body.outside;
-  let query = `INSERT INTO store_details (allowed, inside, outside) VALUES (${allowed}, ${inside}, ${outside});`
+  let age_threshold = req.body.age_threshold;
+  let masks_needed = req.body.masks;
+  let query = `INSERT INTO store_details (allowed, inside, age_threshold, masks_needed) VALUES (${allowed}, ${inside}, ${age_threshold}, '${masks_needed}');`
   connection.query(query, function (err, result) {
     if (err) res.send(err)
     else res.sendStatus(200);
