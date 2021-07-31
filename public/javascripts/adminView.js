@@ -337,7 +337,7 @@ function setStoreStatusButtons() {
         $(".store-status input[type=number].editable").addClass("is-static").attr("readonly", "readonly");
         $(".store-status select").attr("disabled", "disabled")
         let updatedStatus = {
-            "allowed": $("#number_of_people_allowed").val(),
+            "allowed": Math.min($("#number_of_people_allowed").val(), 0),
             "inside": $("#number_of_people_inside").val(),
             "age_threshold": $("#age_threshold").val(),
             "masks": $("#masks_needed").val()

@@ -35,7 +35,7 @@ amqp.connect('amqp://localhost', function (error0, connection) {
             console.log(" [x] Received new person entered");
             console.log("gender is: %s and age is: %s", msg_content[0], msg_content[1]);
             // update db
-            let query = "INSERT INTO finalProject.store_details (allowed, inside, age_threshold, masks) SELECT allowed, inside+1, age_threshold, masks FROM finalProject.store_details ORDER BY id DESC LIMIT 1;"
+            let query = "INSERT INTO finalProject.store_details (allowed, inside, age_threshold, masks_needed) SELECT allowed, inside+1, age_threshold, masks_needed FROM finalProject.store_details ORDER BY id DESC LIMIT 1;"
             DB_connection.query(query, function (err) {
                 if (err) throw err;
             });
@@ -65,7 +65,7 @@ amqp.connect('amqp://localhost', function (error0, connection) {
             console.log(" [x] Received person exit");
 
             // update db
-            let query = "INSERT INTO finalProject.store_details (allowed, inside, age_threshold, masks) SELECT allowed, inside-1, age_threshold, masks FROM finalProject.store_details ORDER BY id DESC LIMIT 1;"
+            let query = "INSERT INTO finalProject.store_details (allowed, inside, age_threshold, masks_needed) SELECT allowed, greatest(inside-1, 0), age_threshold, masks_needed FROM finalProject.store_details ORDER BY id DESC LIMIT 1;"
             DB_connection.query(query, function (err) {
                 if (err) throw err;
             });
