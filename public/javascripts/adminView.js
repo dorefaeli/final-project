@@ -22,7 +22,8 @@ class pageMainLoop {
             res = JSON.parse(res)
             $('#number_of_people_inside').val(res.inside)
             $('#number_of_people_allowed').val(res.allowed)
-            $('#age_threshold').val(res.age_threshold)
+            AgeLimit = res.age_threshold
+            $('#age_threshold').val(AgeLimit)
             $('#masks_needed').val(res.masks_needed)
             $('#number_of_people_outside').val(res.outside)
             if (res.inside <= res.allowed) {
@@ -68,7 +69,7 @@ days_of_the_week[5] = "Friday";
 days_of_the_week[6] = "Saturday";
 
 // defines the age that a customer should pass to be considered as adult
-const AgeLimit = 15;
+let AgeLimit = 15;
 
 const chart_custom_background = {
     id: 'custom_canvas_background_color',
@@ -141,6 +142,7 @@ function drawChart(chart_canvas, type) {
 // adds a record to a dictionary (helps "analyzeData" function building the datasets)
 function addToDict(customer_data, entrance_time, men, women, children) {
     if (customer_data.age <= AgeLimit) {
+        console.log(customer_data.age)
         if (children[entrance_time] !== undefined)
             children[entrance_time] += 1;
         else
@@ -350,8 +352,7 @@ function setStoreStatusButtons() {
                 location.reload();
             }
         })
-        updatePage();
-        pageRefresh = setInterval(updatePage, 5000);
+        location.reload();
     });
 }
 
