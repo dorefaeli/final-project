@@ -18,4 +18,4 @@ Navigate to `localhost:3000`.
 
 ## Additional information
 The ML part of the Final-Project can be found on [Noa's GitHub](https://github.com/Noabbo/Final-Project-ML).  
-For more information, [contact us](mailto:dorefaeli@gmail.com)
+For more information, contact us on [dorefaeli@gmail.com](mailto:dorefaeli@gmail.com)
