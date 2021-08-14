@@ -1,0 +1,18 @@
+version: "3"
+services:
+    Database:
+        container_name: Database
+        image: mysql:5.6
+        ports:
+            - 3307:3306
+        environment: 
+            - MYSQL_ROOT_PASSWORD=my-secret-pw
+            - TZ=Asia/Jerusalem
+    
+    MessageQueue:
+        container_name: MessageQueue
+        image: rabbitmq:3.8.14-management
+        hostname: my-rabbit
+        ports: 
+            - 15672:15672
+            - 5672:5672
