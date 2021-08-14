@@ -102,32 +102,10 @@ function httpGetAsync(theUrl, callback) {
     xmlHttp.send(null);
 }
 
-function sortDataByHours(data) {
-    // let sorted = []
-    // console.log(data !== data.sort()) todo remove
-    return data
-}
-
-function reorder(datasets, type) {
-    for (const dataset in datasets) {
-        switch (type) {
-            case report_types.AVGHours:
-            case report_types.TotalPerHourThisDay:
-                datasets[dataset].data = sortDataByHours(datasets[dataset].data)
-                break;
-            case report_types.AVGPerDay:
-                break;
-            case report_types.TotalPerDayThisWeek:
-                break;
-        }
-    }
-}
-
 // draw a specific chart to a given canvas
 function drawChart(chart_canvas, type) {
     loadDataFromDB((data) => {
         let datasets = analyzeData(data, type);
-        reorder(datasets, type);
         let myChart = new Chart(chart_canvas, {
             type: 'bar',
             data: {
@@ -359,18 +337,6 @@ function setStoreStatusButtons() {
 function convertToCSVTime(entrance_time) {
     return entrance_time.replace('T', ' ').substring(0, entrance_time.length - 5);
 }
-
-// function ageToRange(age) {
-//     if (age < 7) return "0-6";
-//     if (age < 13) return "7-12";
-//     if (age < 17) return "13-16";
-//     if (age < 22) return "17-21";
-//     if (age < 30) return "22-29";
-//     if (age > 69) return "70+";
-//     let startOfRange = Math.floor(age / 10) * 10;
-//     let endOfRange = startOfRange + 9;
-//     return startOfRange.toString() + "-" + endOfRange.toString();
-// } TODO remove!
 
 function beautifyDataForCSV(data) {
     let new_data = []
