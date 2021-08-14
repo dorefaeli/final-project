@@ -17,5 +17,5 @@ When the containers are up and running execute the commands in `Init mySQL Serve
 Navigate to `localhost:3000`.
 
 ## Additional information
-The ML part of the Final-Project can be found on [Noa's GitHub](github.com/Noabbo/Final-Project-ML).  
-For more information, [contact us](mailto:dorefaeli@gmail.com)
+The ML part of the Final-Project can be found on [Noa's GitHub](https://github.com/Noabbo/Final-Project-ML).  
+For more information, [contact us](dorefaeli@gmail.com)
