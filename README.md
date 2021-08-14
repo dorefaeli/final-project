@@ -1,10 +1,10 @@
 # Final-Project - BIU 2021
 
 This part of the final project contains the UI and "casing" of the project, which consists of:  
-Front-end `HTML`, `CSS`, `JS`, `Bulma`, `Chart.js`, `jsPDF`  
-Back-end `Node.js`, `Express.js`  
-Database `mySQL`  
-Message Queue `RabbitMQ`  
+- Front-end `HTML`, `CSS`, `JS`, `Bulma`, `Chart.js`, `jsPDF`  
+- Back-end `Node.js`, `Express.js`  
+- Database `mySQL`
+- Message Queue `RabbitMQ`  
 
 ## First-Time Users
 When running this project for the first time:  
