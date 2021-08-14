@@ -8,14 +8,13 @@ Message Queue `RabbitMQ`
 
 ## First-Time Users
 When running this project for the first time:  
-Make sure you have docker installed on your machine  
-Open cmd and navigate to the `docker` sub-directory  
-Run the following line:
+- Make sure you have docker installed on your machine  
+- Open cmd and navigate to the `docker` sub-directory and run the following line:
 > docker-compose up -d --remove-orphans
 
-When the containers are up and running execute the commands in `Init mySQL Server.sql`  
-Navigate to `localhost:3000`.
+- When the containers are up and running execute the commands in `Init mySQL Server.sql`  
+- Navigate to `localhost:3000`
 
 ## Additional information
 The ML part of the Final-Project can be found on [Noa's GitHub](https://github.com/Noabbo/Final-Project-ML).  
-For more information, contact us on [dorefaeli@gmail.com](mailto:dorefaeli@gmail.com)
+For more information, contact us on [dorefaeli@gmail.com](mailto:dorefaeli@gmail.com).
