@@ -13,7 +13,8 @@ When running this project for the first time:
 > docker-compose up -d --remove-orphans
 
 - When the containers are up and running execute the commands in `Init mySQL Server.sql`  
-- Navigate to `localhost:3000`
+- Navigate to `localhost:3000` on the external monitor
+- As a store owner you can view and change data on `localhost:3000/admin`
 
 ## Additional information
 The ML part of the Final-Project can be found on [Noa's GitHub](https://github.com/Noabbo/Final-Project-ML).  
